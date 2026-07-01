@@ -1,0 +1,44 @@
+.progress {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+}
+
+.header {
+  align-items: center;
+  color: var(--color-muted);
+  display: flex;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  justify-content: space-between;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.header strong {
+  color: var(--color-cyan);
+  font-weight: 700;
+}
+
+.track {
+  display: grid;
+  gap: 2px;
+  grid-template-columns: repeat(24, 1fr);
+  height: 12px;
+  max-width: 300px;
+}
+
+.track span {
+  background: rgba(148, 163, 184, 0.1);
+  border: 1px solid rgba(39, 52, 73, 0.65);
+}
+
+.track .filled {
+  background: #83c9f4;
+  border-color: #83c9f4;
+}
+
+.green .filled {
+  background: var(--color-green);
+  border-color: var(--color-green);
+}

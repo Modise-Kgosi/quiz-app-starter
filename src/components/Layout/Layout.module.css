@@ -1,0 +1,247 @@
+.layout {
+  background: var(--color-background);
+  border-bottom: 1px solid var(--color-border);
+  display: grid;
+  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.topbar {
+  align-items: center;
+  background: rgba(10, 15, 20, 0.92);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  font-family: var(--font-mono);
+  gap: 16px;
+  justify-content: space-between;
+  min-height: var(--topbar-height);
+  padding: 0 14px;
+}
+
+.topbarPrompt {
+  align-items: center;
+  display: flex;
+  gap: 14px;
+  min-width: 0;
+}
+
+.windowDots {
+  display: inline-flex;
+  gap: 6px;
+}
+
+.windowDots i {
+  background: var(--color-green);
+  border-radius: 50%;
+  display: block;
+  height: 9px;
+  width: 9px;
+}
+
+.windowDots i:first-child {
+  background: #c07d77;
+}
+
+.windowDots i:nth-child(2) {
+  background: #548d73;
+}
+
+.promptText {
+  background: rgba(131, 201, 244, 0.14);
+  color: #8bd0ff;
+  font-size: 0.72rem;
+  padding: 2px 8px;
+}
+
+.status {
+  align-items: center;
+  color: var(--color-muted);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.72rem;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.status strong {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.categoryBadge {
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  display: inline-flex;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  gap: 8px;
+  padding: 5px 8px;
+}
+
+.categoryActive {
+  background: rgba(23, 147, 209, 0.12);
+  border-color: var(--color-arch);
+  color: var(--color-green);
+}
+
+.terminalCard {
+  animation: scanIn 220ms ease both;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.terminalHeader {
+  align-items: center;
+  background: var(--color-panel-raised);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  justify-content: space-between;
+  min-height: 34px;
+  padding: 0 16px;
+}
+
+.terminalLeft {
+  align-items: center;
+  display: flex;
+  gap: 7px;
+  min-width: 0;
+}
+
+.dot {
+  border-radius: 50%;
+  display: inline-block;
+  height: 9px;
+  width: 9px;
+}
+
+.red {
+  background: #c07d77;
+}
+
+.yellow {
+  background: #548d73;
+}
+
+.green {
+  background: #49c878;
+}
+
+.terminalPath {
+  color: var(--color-text);
+  margin-left: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.terminalMeta {
+  color: var(--color-dim);
+}
+
+.terminalBody {
+  padding: var(--space-5);
+}
+
+.terminalFooter {
+  border-top: 1px solid var(--color-border);
+  padding: 16px 20px;
+}
+
+.main {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-width: 0;
+}
+
+.content {
+  padding: 14px;
+}
+
+.commandLine {
+  align-items: center;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text);
+  display: flex;
+  font-family: var(--font-mono);
+  gap: 12px;
+  min-height: 48px;
+  padding: 0 28px;
+}
+
+.commandLine i {
+  animation: pulseCursor 1s steps(1) infinite;
+  background: #83c9f4;
+  display: block;
+  height: 21px;
+  width: 10px;
+}
+
+.commandLine small {
+  color: var(--color-muted);
+  font-size: 0.65rem;
+}
+
+.commandLine small::before {
+  color: var(--color-green);
+  content: "● ";
+}
+
+.commandLine nav {
+  display: flex;
+  gap: 28px;
+  margin-left: auto;
+}
+
+.commandLine a {
+  color: var(--color-muted);
+  font-size: 0.68rem;
+  text-decoration: none;
+}
+
+.commandLine a:hover {
+  color: var(--color-cyan);
+}
+
+@media (max-width: 860px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .content {
+    padding: 12px;
+  }
+
+  .commandLine {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px 16px;
+  }
+
+  .commandLine nav {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 680px) {
+  .topbar {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 9px 14px;
+  }
+}
+
+@media (max-width: 640px) {
+  .terminalHeader {
+    padding: 0 12px;
+  }
+
+  .terminalBody {
+    padding: 16px;
+  }
+}
