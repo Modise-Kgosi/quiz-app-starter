@@ -1,0 +1,54 @@
+import { useReducer, useCallback } from "react";
+import { quizReducer, createInitialState } from "../state/quizReducer";
+import { calculateScore } from "../utils/scoring";
+import type { NewQuestion } from "../types/quiz";
+
+export function useQuizEngine(questions: NewQuestion[]) {
+  const [state, dispatch] = useReducer(
+    quizReducer,
+    questions,
+    createInitialState
+  );
+
+  const selectAnswer = useCallback((selectedIndex: number) => {
+    dispatch({ type: "ANSWER_SELECTED", payload: { selectedIndex } });
+  }, []);
+
+  const goNext = useCallback(() => {
+    dispatch({ type: "GO_NEXT" });
+  }, []);
+
+  const goPrevious = useCallback(() => {
+    dispatch({ type: "GO_PREVIOUS" });
+  }, []);
+
+  const reset = useCallback(() => {
+    dispatch({ type: "RESET" });
+  }, []);
+
+  const currentQuestion =
+    state.questions.length > 0
+      ? state.questions[state.currentIndex]
+      : undefined;
+
+  const score = calculateScore(state.answers, state.questions.length);
+
+  const isFirstQuestion = state.currentIndex === 0;
+  const isLastQuestion =
+    state.currentIndex === state.questions.length - 1;
+
+  return {
+    currentQuestion,
+    currentIndex: state.currentIndex,
+    totalQuestions: state.questions.length,
+    answers: state.answers,
+    isComplete: state.isComplete,
+    isFirstQuestion,
+    isLastQuestion,
+    score,
+    selectAnswer,
+    goNext,
+    goPrevious,
+    reset,
+  };
+}
