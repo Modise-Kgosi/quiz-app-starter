@@ -1,7 +1,28 @@
-/* Minimal reset — you own the design from here. */
-
 .app {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 2rem;
+  min-height: 100vh;
+}
+
+.showcase {
+  display: grid;
+  gap: 48px;
+}
+
+.screenLabel {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-background);
+  color: var(--color-cyan);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  padding: 10px 18px;
+  text-transform: uppercase;
+}
+
+@media (max-width: 860px) {
+  .showcase {
+    gap: 28px;
+  }
 }
