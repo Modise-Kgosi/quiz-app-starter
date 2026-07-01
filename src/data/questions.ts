@@ -5,7 +5,7 @@ import type { Question } from "../types/quiz";
  * Covers: Git, React, TypeScript, Dev Tools, Deployment, HTML/CSS
  */
 
-export const questions: Question[] = [
+const questions: Question[] = [
   // =========================
   // GIT & GITHUB (4)
   // =========================
@@ -191,7 +191,7 @@ export const questions: Question[] = [
       "Creates Git repo",
     ],
     correctAnswer: 1,
-    category: "dev-tools",
+    category: "tooling",
     explanation: "npm install downloads all dependencies from package.json.",
   },
 
@@ -205,7 +205,7 @@ export const questions: Question[] = [
       "A Git branch",
     ],
     correctAnswer: 1,
-    category: "dev-tools",
+    category: "tooling",
     explanation: "package.json stores project info and dependencies.",
   },
 
@@ -219,7 +219,7 @@ export const questions: Question[] = [
       "CSS framework",
     ],
     correctAnswer: 1,
-    category: "dev-tools",
+    category: "tooling",
     explanation: "Vite is a fast development build tool for frontend apps.",
   },
 
@@ -316,3 +316,5 @@ export const questions: Question[] = [
     explanation: "Selectors define which HTML elements are styled.",
   },
 ];
+
+export default questions;
