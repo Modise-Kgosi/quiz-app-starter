@@ -14,12 +14,14 @@ export interface ResultsScreenProps {
   score: number;
   total: number;
   results: CategoryResult[];
+  onRestart: () => void;
 }
 
 export default function ResultsScreen({
   score,
   total,
   results,
+  onRestart,
 }: ResultsScreenProps) {
   return (
     <TerminalCard
@@ -55,7 +57,7 @@ export default function ResultsScreen({
       </section>
       <div className={styles.rule} />
       <div className={styles.actions}>
-        <Button size="lg" variant="primary">
+        <Button size="lg" variant="primary" onClick={onRestart}>
           restart quiz
         </Button>
         <Button size="lg">export logs</Button>

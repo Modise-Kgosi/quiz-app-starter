@@ -4,6 +4,7 @@ import styles from "./WelcomeScreen.module.css";
 
 export interface WelcomeScreenProps {
   categories: string[];
+  onStart: () => void;
 }
 
 const archAscii = String.raw`
@@ -14,7 +15,10 @@ const archAscii = String.raw`
     /_/   |_|  \____|_____| /_/  \_\    /_/  \_\
 `;
 
-export default function WelcomeScreen({ categories }: WelcomeScreenProps) {
+export default function WelcomeScreen({
+  categories,
+  onStart,
+}: WelcomeScreenProps) {
   return (
     <div className={styles.screen}>
       <TerminalCard path="~/welcome.sh" title="welcome" meta="1024x768">
@@ -42,7 +46,7 @@ export default function WelcomeScreen({ categories }: WelcomeScreenProps) {
             </div>
           </div>
 
-          <Button size="lg" variant="primary">
+          <Button size="lg" variant="primary" onClick={onStart}>
             start_environment
           </Button>
 

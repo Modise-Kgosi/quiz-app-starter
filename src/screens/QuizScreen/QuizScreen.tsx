@@ -8,13 +8,25 @@ export interface QuizScreenProps {
   question: Question;
   questionNumber: number;
   totalQuestions: number;
+  selectedIndex?: number;
+  isFirstQuestion: boolean;
+  onSelectAnswer: (selectedIndex: number) => void;
+  onNext: () => void;
+  onPrevious: () => void;
 }
 
 export default function QuizScreen({
   question,
   questionNumber,
   totalQuestions,
+  selectedIndex,
+  isFirstQuestion,
+  onSelectAnswer,
+  onNext,
+  onPrevious,
 }: QuizScreenProps) {
+  const progressValue = Math.round((questionNumber / totalQuestions) * 100);
+
   return (
     <div className={styles.screen}>
       <TerminalCard
@@ -25,8 +37,12 @@ export default function QuizScreen({
               <span>Ctrl+H help</span>
             </div>
             <div className={styles.actions}>
-              <Button disabled>prev</Button>
-              <Button variant="primary">next</Button>
+              <Button disabled={isFirstQuestion} onClick={onPrevious}>
+                prev
+              </Button>
+              <Button variant="primary" onClick={onNext}>
+                next
+              </Button>
             </div>
           </div>
         }
@@ -35,10 +51,11 @@ export default function QuizScreen({
         title="quiz"
       >
         <QuestionCard
-          progressValue={15}
+          onSelectAnswer={onSelectAnswer}
+          progressValue={progressValue}
           question={question}
           questionNumber={questionNumber}
-          selectedIndex={1}
+          selectedIndex={selectedIndex}
           totalQuestions={totalQuestions}
         />
       </TerminalCard>

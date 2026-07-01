@@ -8,14 +8,12 @@ export interface ScoreSummary {
 
 export function calculateScore(
   answers: AnsweredRecord[],
-  totalQuestions: number
+  totalQuestions: number,
 ): ScoreSummary {
   const correct = answers.filter((answer) => answer.isCorrect).length;
 
   const percentage =
-    totalQuestions === 0
-      ? 0
-      : Math.round((correct / totalQuestions) * 100);
+    totalQuestions === 0 ? 0 : Math.round((correct / totalQuestions) * 100);
 
   return {
     correct,
@@ -26,9 +24,7 @@ export function calculateScore(
 
 export function getAnswerForQuestion(
   answers: AnsweredRecord[],
-  question: NewQuestion
+  question: NewQuestion,
 ): AnsweredRecord | undefined {
-  return answers.find(
-    (answer) => answer.questionId === question.id
-  );
+  return answers.find((answer) => answer.questionId === question.id);
 }

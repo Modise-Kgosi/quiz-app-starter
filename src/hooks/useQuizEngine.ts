@@ -7,7 +7,7 @@ export function useQuizEngine(questions: NewQuestion[]) {
   const [state, dispatch] = useReducer(
     quizReducer,
     questions,
-    createInitialState
+    createInitialState,
   );
 
   const selectAnswer = useCallback((selectedIndex: number) => {
@@ -34,8 +34,7 @@ export function useQuizEngine(questions: NewQuestion[]) {
   const score = calculateScore(state.answers, state.questions.length);
 
   const isFirstQuestion = state.currentIndex === 0;
-  const isLastQuestion =
-    state.currentIndex === state.questions.length - 1;
+  const isLastQuestion = state.currentIndex === state.questions.length - 1;
 
   return {
     currentQuestion,

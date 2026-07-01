@@ -8,6 +8,7 @@ export interface QuestionCardProps {
   totalQuestions: number;
   progressValue: number;
   selectedIndex?: number;
+  onSelectAnswer: (selectedIndex: number) => void;
 }
 
 export default function QuestionCard({
@@ -16,6 +17,7 @@ export default function QuestionCard({
   totalQuestions,
   progressValue,
   selectedIndex,
+  onSelectAnswer,
 }: QuestionCardProps) {
   return (
     <div className={styles.questionCard}>
@@ -36,6 +38,7 @@ export default function QuestionCard({
           <AnswerOption
             index={index}
             key={option}
+            onSelect={onSelectAnswer}
             selected={selectedIndex === index}
             text={option}
           />
@@ -52,14 +55,21 @@ interface AnswerOptionProps {
   index: number;
   text: string;
   selected?: boolean;
+  onSelect: (selectedIndex: number) => void;
 }
 
 const answerLetters = ["A", "B", "C", "D", "E", "F"];
 
-function AnswerOption({ index, text, selected = false }: AnswerOptionProps) {
+function AnswerOption({
+  index,
+  text,
+  selected = false,
+  onSelect,
+}: AnswerOptionProps) {
   return (
     <button
       className={`${styles.answerOption} ${selected ? styles.selected : ""}`}
+      onClick={() => onSelect(index)}
       type="button"
     >
       <span className={styles.answerKey}>

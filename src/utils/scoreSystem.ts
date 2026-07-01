@@ -1,10 +1,14 @@
-export function calculateScore(answers: any[], questions: any[]) {
-  const correct = answers.filter(a => a.isCorrect).length;
+interface AnswerSummary {
+  isCorrect: boolean;
+}
+
+export function calculateScore(answers: AnswerSummary[], questions: unknown[]) {
+  const correct = answers.filter((a) => a.isCorrect).length;
 
   return {
     correct,
     total: questions.length,
-    percentage: Math.round((correct / questions.length) * 100)
+    percentage: Math.round((correct / questions.length) * 100),
   };
 }
 
