@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { useEffect, useMemo, useState } from "react";
+=======
+import { useMemo, useState, useEffect } from "react";
+>>>>>>> origin/feature/score-persistence
 import Layout from "./components/Layout/Layout";
 import type { SidebarItem } from "./components/Sidebar/Sidebar";
 import TerminalModal from "./components/TerminalModal/TerminalModal";
@@ -41,7 +45,17 @@ function App() {
   // Manages quiz state such as current question, answers, score, and navigation.
   const quiz = useQuizEngine(questions);
 
+<<<<<<< HEAD
   // Collects all unique question categories for the sidebar and screens.
+=======
+  useEffect(() => {
+    // Restore quiz screen if there's saved progress
+    if (quiz.answers.length > 0) {
+      setScreen("quiz");
+    }
+  }, []);
+
+>>>>>>> origin/feature/score-persistence
   const categories = useMemo(
     () => Array.from(new Set(questions.map((question) => question.category))),
     [],

@@ -1,6 +1,7 @@
-import { useReducer, useCallback } from "react";
+import { useReducer, useCallback, useEffect, useRef } from "react";
 import { quizReducer, createInitialState } from "../state/quizReducer";
 import { calculateScore } from "../utils/scoring";
+<<<<<<< HEAD
 import type { AnsweredRecord, NewQuestion } from "../types/quiz";
 
 function getCurrentStreak(answers: AnsweredRecord[]) {
@@ -16,13 +17,36 @@ function getCurrentStreak(answers: AnsweredRecord[]) {
 
   return streak;
 }
+=======
+import type { NewQuestion } from "../types/quiz";
+import type { QuizState } from "../state/quizReducer";
+
+const QUIZ_STORAGE_KEY = "quiz-state";
+>>>>>>> origin/feature/score-persistence
 
 export function useQuizEngine(questions: NewQuestion[]) {
-  const [state, dispatch] = useReducer(
-    quizReducer,
-    questions,
-    createInitialState,
-  );
+  const isResetPendingRef = useRef(false);
+
+  const [state, dispatch] = useReducer(quizReducer, questions, (qs) => {
+    try {
+      const saved = localStorage.getItem(QUIZ_STORAGE_KEY);
+      if (saved) {
+        return JSON.parse(saved) as QuizState;
+      }
+    } catch {
+      // Fall through to initial state on parse error
+    }
+    return createInitialState(qs);
+  });
+
+  useEffect(() => {
+    if (isResetPendingRef.current) {
+      localStorage.removeItem(QUIZ_STORAGE_KEY);
+      isResetPendingRef.current = false;
+    } else {
+      localStorage.setItem(QUIZ_STORAGE_KEY, JSON.stringify(state));
+    }
+  }, [state]);
 
   const selectAnswer = useCallback((selectedIndex: number) => {
     dispatch({ type: "ANSWER_SELECTED", payload: { selectedIndex } });
@@ -37,6 +61,7 @@ export function useQuizEngine(questions: NewQuestion[]) {
   }, []);
 
   const reset = useCallback(() => {
+    isResetPendingRef.current = true;
     dispatch({ type: "RESET" });
   }, []);
 
