@@ -18,6 +18,58 @@ export function createInitialState(questions: NewQuestion[]): QuizState {
   };
 }
 
+function normalizeAnswers(answers: unknown): AnsweredRecord[] {
+  if (!Array.isArray(answers)) {
+    return [];
+  }
+
+  return answers.filter(
+    (answer): answer is AnsweredRecord =>
+      typeof answer === "object" &&
+      answer !== null &&
+      typeof (answer as AnsweredRecord).questionId === "number" &&
+      typeof (answer as AnsweredRecord).selectedIndex === "number" &&
+      typeof (answer as AnsweredRecord).isCorrect === "boolean",
+  );
+}
+
+export function hydrateQuizState(
+  questions: NewQuestion[],
+  savedState: unknown,
+): QuizState {
+  if (!savedState || typeof savedState !== "object") {
+    return createInitialState(questions);
+  }
+
+  const candidate = savedState as Partial<QuizState>;
+  const totalQuestions = questions.length;
+  const currentIndex =
+    typeof candidate.currentIndex === "number" &&
+    Number.isInteger(candidate.currentIndex) &&
+    candidate.currentIndex >= 0 &&
+    candidate.currentIndex < totalQuestions
+      ? candidate.currentIndex
+      : 0;
+  const answers = normalizeAnswers(candidate.answers);
+  const isComplete =
+    typeof candidate.isComplete === "boolean"
+      ? candidate.isComplete
+      : answers.length === totalQuestions;
+  const pendingSelection =
+    typeof candidate.pendingSelection === "number" &&
+    candidate.pendingSelection >= 0
+      ? candidate.pendingSelection
+      : null;
+
+  return {
+    questions,
+    currentIndex,
+    answers,
+    isComplete,
+    pendingSelection,
+  };
+}
+
 export type QuizAction =
   | { type: "ANSWER_SELECTED"; payload: { selectedIndex: number } }
   | { type: "GO_NEXT" }

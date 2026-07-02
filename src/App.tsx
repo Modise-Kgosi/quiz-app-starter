@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 import { useEffect, useMemo, useState } from "react";
-=======
-import { useMemo, useState, useEffect } from "react";
->>>>>>> origin/feature/score-persistence
 import Layout from "./components/Layout/Layout";
 import type { SidebarItem } from "./components/Sidebar/Sidebar";
 import TerminalModal from "./components/TerminalModal/TerminalModal";
@@ -18,6 +14,14 @@ import "./App.css";
 
 type AppScreen = "welcome" | "quiz";
 type ActiveModal = "errors" | "not-implemented" | null;
+
+interface PersistedSessionState {
+  screen: AppScreen;
+  sessionStartedAt: number | null;
+  elapsedTime: number;
+}
+
+const APP_SESSION_STORAGE_KEY = "quiz-app-session";
 
 // Footer actions shown in the app layout.
 const footerItems = [
@@ -37,17 +41,54 @@ function formatElapsedTime(milliseconds: number) {
 }
 
 function App() {
+  const loadPersistedSession = () => {
+    try {
+      const saved = window.localStorage.getItem(APP_SESSION_STORAGE_KEY);
+      if (!saved) {
+        return {
+          screen: "welcome" as AppScreen,
+          sessionStartedAt: null as number | null,
+          elapsedTime: 0,
+        };
+      }
+
+      const parsed = JSON.parse(saved) as Partial<PersistedSessionState>;
+      return {
+        screen:
+          parsed.screen === "quiz" || parsed.screen === "welcome"
+            ? parsed.screen
+            : ("welcome" as AppScreen),
+        sessionStartedAt:
+          typeof parsed.sessionStartedAt === "number"
+            ? parsed.sessionStartedAt
+            : null,
+        elapsedTime:
+          typeof parsed.elapsedTime === "number" ? parsed.elapsedTime : 0,
+      };
+    } catch {
+      return {
+        screen: "welcome" as AppScreen,
+        sessionStartedAt: null as number | null,
+        elapsedTime: 0,
+      };
+    }
+  };
+
   // Tracks whether the app is showing the welcome screen or the quiz screen.
-  const [screen, setScreen] = useState<AppScreen>("welcome");
+  const [screen, setScreen] = useState<AppScreen>(
+    () => loadPersistedSession().screen,
+  );
   const [activeModal, setActiveModal] = useState<ActiveModal>(null);
-  const [sessionStartedAt, setSessionStartedAt] = useState<number | null>(null);
-  const [elapsedTime, setElapsedTime] = useState(0);
+  const [sessionStartedAt, setSessionStartedAt] = useState<number | null>(
+    () => loadPersistedSession().sessionStartedAt,
+  );
+  const [elapsedTime, setElapsedTime] = useState(
+    () => loadPersistedSession().elapsedTime,
+  );
   // Manages quiz state such as current question, answers, score, and navigation.
   const quiz = useQuizEngine(questions);
 
-<<<<<<< HEAD
   // Collects all unique question categories for the sidebar and screens.
-=======
   useEffect(() => {
     // Restore quiz screen if there's saved progress
     if (quiz.answers.length > 0) {
@@ -55,7 +96,6 @@ function App() {
     }
   }, []);
 
->>>>>>> origin/feature/score-persistence
   const categories = useMemo(
     () => Array.from(new Set(questions.map((question) => question.category))),
     [],
@@ -152,6 +192,22 @@ function App() {
 
     return null;
   }
+
+  useEffect(() => {
+    try {
+      const payload: PersistedSessionState = {
+        screen,
+        sessionStartedAt,
+        elapsedTime,
+      };
+      window.localStorage.setItem(
+        APP_SESSION_STORAGE_KEY,
+        JSON.stringify(payload),
+      );
+    } catch {
+      // Ignore storage write errors and keep the app functional.
+    }
+  }, [elapsedTime, screen, sessionStartedAt]);
 
   useEffect(() => {
     if (screen !== "quiz" || sessionStartedAt === null) {

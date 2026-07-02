@@ -1,7 +1,10 @@
 import { useReducer, useCallback, useEffect, useRef } from "react";
-import { quizReducer, createInitialState } from "../state/quizReducer";
+import {
+  quizReducer,
+  createInitialState,
+  hydrateQuizState,
+} from "../state/quizReducer";
 import { calculateScore } from "../utils/scoring";
-<<<<<<< HEAD
 import type { AnsweredRecord, NewQuestion } from "../types/quiz";
 
 function getCurrentStreak(answers: AnsweredRecord[]) {
@@ -17,12 +20,8 @@ function getCurrentStreak(answers: AnsweredRecord[]) {
 
   return streak;
 }
-=======
-import type { NewQuestion } from "../types/quiz";
-import type { QuizState } from "../state/quizReducer";
 
 const QUIZ_STORAGE_KEY = "quiz-state";
->>>>>>> origin/feature/score-persistence
 
 export function useQuizEngine(questions: NewQuestion[]) {
   const isResetPendingRef = useRef(false);
@@ -31,7 +30,8 @@ export function useQuizEngine(questions: NewQuestion[]) {
     try {
       const saved = localStorage.getItem(QUIZ_STORAGE_KEY);
       if (saved) {
-        return JSON.parse(saved) as QuizState;
+        const parsed = JSON.parse(saved) as unknown;
+        return hydrateQuizState(qs, parsed);
       }
     } catch {
       // Fall through to initial state on parse error
