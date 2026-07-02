@@ -1,0 +1,142 @@
+.screen {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.footer {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.keys,
+.actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.footerMeta {
+  align-items: center;
+  display: flex;
+  flex: 1 1 180px;
+  min-height: 32px;
+}
+
+.requirement {
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: clamp(0.58rem, 1.7vw, 0.68rem);
+  letter-spacing: 0.08em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.requirementReady {
+  color: var(--color-green);
+}
+
+.keys span {
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  text-transform: uppercase;
+}
+
+.keys span::first-letter {
+  background: rgba(148, 163, 184, 0.2);
+}
+
+.widgets,
+.resources {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.statPanel {
+  background: var(--color-panel);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  display: grid;
+  gap: 6px;
+  min-height: 72px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  padding: 14px 16px;
+}
+
+.statPanel span {
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.statPanel strong {
+  font-family: var(--font-mono);
+  font-size: clamp(0.9rem, 2.4vw, 1.05rem);
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.blue {
+  color: #83c9f4;
+}
+
+.green {
+  color: var(--color-green);
+}
+
+.resources {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.resources dl {
+  display: grid;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  gap: 8px 16px;
+  grid-template-columns: auto 1fr;
+  margin: 0;
+}
+
+.resources dt {
+  color: var(--color-muted);
+}
+
+.resources dd {
+  color: #8bd0ff;
+  margin: 0;
+}
+
+@media (max-width: 860px), (max-height: 720px) {
+  .resources {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .widgets {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .actions {
+    justify-content: flex-end;
+  }
+
+  .statPanel {
+    min-height: 68px;
+    padding: 12px 13px;
+  }
+}

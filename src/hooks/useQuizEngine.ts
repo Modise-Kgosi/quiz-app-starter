@@ -1,0 +1,95 @@
+import { useReducer, useCallback, useEffect, useRef } from "react";
+import {
+  quizReducer,
+  createInitialState,
+  hydrateQuizState,
+} from "../state/quizReducer";
+import { calculateScore } from "../utils/scoring";
+import type { AnsweredRecord, NewQuestion } from "../types/quiz";
+
+function getCurrentStreak(answers: AnsweredRecord[]) {
+  let streak = 0;
+
+  for (let index = answers.length - 1; index >= 0; index -= 1) {
+    if (!answers[index].isCorrect) {
+      break;
+    }
+
+    streak += 1;
+  }
+
+  return streak;
+}
+
+const QUIZ_STORAGE_KEY = "quiz-state";
+
+export function useQuizEngine(questions: NewQuestion[]) {
+  const isResetPendingRef = useRef(false);
+
+  const [state, dispatch] = useReducer(quizReducer, questions, (qs) => {
+    try {
+      const saved = localStorage.getItem(QUIZ_STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved) as unknown;
+        return hydrateQuizState(qs, parsed);
+      }
+    } catch {
+      // Fall through to initial state on parse error
+    }
+    return createInitialState(qs);
+  });
+
+  useEffect(() => {
+    if (isResetPendingRef.current) {
+      localStorage.removeItem(QUIZ_STORAGE_KEY);
+      isResetPendingRef.current = false;
+    } else {
+      localStorage.setItem(QUIZ_STORAGE_KEY, JSON.stringify(state));
+    }
+  }, [state]);
+
+  const selectAnswer = useCallback((selectedIndex: number) => {
+    dispatch({ type: "ANSWER_SELECTED", payload: { selectedIndex } });
+  }, []);
+
+  const goNext = useCallback(() => {
+    dispatch({ type: "GO_NEXT" });
+  }, []);
+
+  const goPrevious = useCallback(() => {
+    dispatch({ type: "GO_PREVIOUS" });
+  }, []);
+
+  const reset = useCallback(() => {
+    isResetPendingRef.current = true;
+    dispatch({ type: "RESET" });
+  }, []);
+
+  const currentQuestion =
+    state.questions.length > 0
+      ? state.questions[state.currentIndex]
+      : undefined;
+
+  const score = calculateScore(state.answers, state.questions.length);
+  const streak = getCurrentStreak(state.answers);
+
+  const isFirstQuestion = state.currentIndex === 0;
+  const isLastQuestion = state.currentIndex === state.questions.length - 1;
+
+  return {
+    currentQuestion,
+    currentIndex: state.currentIndex,
+    totalQuestions: state.questions.length,
+    answers: state.answers,
+    pendingSelection: state.pendingSelection,
+    isComplete: state.isComplete,
+    isFirstQuestion,
+    isLastQuestion,
+    score,
+    streak,
+    selectAnswer,
+    goNext,
+    goPrevious,
+    reset,
+  };
+}
