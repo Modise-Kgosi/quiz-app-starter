@@ -211,9 +211,9 @@ The application follows a component-based architecture.
 
 ## Contributors
 
-[Thuto](https://github.com/mrmalope-404) &
-[Modise](https://github.com/Modise-Kgosi) &
-[Itumeleng](https://github.com/ITaolana) &
+[Thuto](https://github.com/mrmalope-404) ,
+[Modise](https://github.com/Modise-Kgosi) ,
+[Itumeleng](https://github.com/ITaolana) ,
 [Barati](https://github.com/bida22-036)
 
 Developed collaboratively as part of a team project.
