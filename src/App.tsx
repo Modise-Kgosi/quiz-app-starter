@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import Layout from "./components/Layout/Layout";
 import questions from "./data/questions";
 import { useQuizEngine } from "./hooks/useQuizEngine";
@@ -19,6 +19,13 @@ const footerItems = [
 function App() {
   const [screen, setScreen] = useState<AppScreen>("welcome");
   const quiz = useQuizEngine(questions);
+
+  useEffect(() => {
+    // Restore quiz screen if there's saved progress
+    if (quiz.answers.length > 0) {
+      setScreen("quiz");
+    }
+  }, []);
 
   const categories = useMemo(
     () => Array.from(new Set(questions.map((question) => question.category))),
