@@ -1,53 +1,236 @@
-# Quiz App Starter
+# Dev Quiz
 
-Starter template for the ACA orientation quiz project. Fork this repo and build your own quiz app.
-
-## Your README goes here
-
-**Replace this entire file** with your own README once you start building. A good project README includes:
-
-### 1. What it is
-One or two sentences describing your quiz app — what topics it covers, what makes it yours.
-
-### 2. Live demo
-Link to your deployed Vercel URL.
-
-### 3. How to run locally
-
-```bash
-git clone git@github.com:YOUR-USERNAME/quiz-app-starter.git
-cd quiz-app-starter
-npm install
-npm run dev
-```
-
-### 4. What you learned
-A short reflection — what concepts clicked, what was hard, what you'd do differently.
+A modern developer quiz application built with **React**, **TypeScript**, and **Vite**. The application presents multiple-choice questions across different software development topics in a terminal-inspired interface.
 
 ---
 
-## Starter structure
+## Features
+
+- Terminal-inspired Linux UI
+- 20 multiple-choice questions
+- Categories include:
+  - Git
+  - React
+  - TypeScript
+  - Tooling
+  - Deployment
+  - HTML & CSS
+- Previous and Next question navigation
+- Automatic score calculation
+- Category-by-category performance report
+- Restart quiz functionality
+- Responsive layout
+- Unit tests with Vitest
+- Type-safe code using TypeScript
+
+---
+
+## Tech Stack
+
+- React 19
+- TypeScript
+- Vite
+- Vitest
+- ESLint
+- Prettier
+
+---
+
+## Project Structure
 
 ```
 src/
-├── components/     ← Build your UI components here
+│
+├── components/
+│   ├── Button/
+│   ├── Layout/
+│   ├── ProgressBar/
+│   ├── QuestionCard/
+│   └── Sidebar/
+│
 ├── data/
-│   └── questions.ts   ← Your quiz questions (1 example included)
+│   └── questions.ts
+│
 ├── hooks/
-│   └── useLocalStorage.ts  ← Optional helper for persisting state
+│   ├── useLocalStorage.ts
+│   └── useQuizEngine.ts
+│
+├── screens/
+│   ├── WelcomeScreen/
+│   ├── QuizScreen/
+│   └── ResultsScreen/
+│
+├── state/
+│   ├── quizReducer.ts
+│   └── quizReducer.test.ts
+│
 ├── types/
-│   └── quiz.ts        ← Question type definition
-├── App.tsx            ← Your starting point
-├── App.css            ← Minimal styles — make it your own
-├── index.css          ← Base reset
-└── main.tsx           ← Entry point (no need to edit)
+│   └── quiz.ts
+│
+├── utils/
+│   ├── calculateScore.ts
+│   ├── calculateScore.test.ts
+│   ├── scoring.ts
+│   ├── scoreSystem.ts
+│   └── shuffleQuestions.ts
+│
+├── App.tsx
+└── main.tsx
 ```
 
-## Scripts
+---
 
-| Command | What it does |
-|---------|-------------|
-| `npm run dev` | Start the dev server at localhost:5173 |
-| `npm run build` | Type-check and build for production |
-| `npm run lint` | Run ESLint |
-| `npm run preview` | Preview the production build locally |
+## Installation
+
+Clone the repository.
+
+```bash
+git clone <repository-url>
+```
+
+Move into the project.
+
+```bash
+cd quiz-app-starter
+```
+
+Install dependencies.
+
+```bash
+npm install
+```
+
+---
+
+## Running the Application
+
+Start the development server.
+
+```bash
+npm run dev
+```
+
+Open your browser and navigate to
+
+```
+http://localhost:5173
+```
+
+---
+
+## Available Scripts
+
+Start the development server.
+
+```bash
+npm run dev
+```
+
+Run the test suite.
+
+```bash
+npm test
+```
+
+Build the project.
+
+```bash
+npm run build
+```
+
+Preview the production build.
+
+```bash
+npm run preview
+```
+
+Run ESLint.
+
+```bash
+npm run lint
+```
+
+---
+
+## Testing
+
+The project uses **Vitest** for unit testing.
+
+Current test coverage includes:
+
+- Score calculation
+- Quiz reducer state management
+
+Run the tests with:
+
+```bash
+npm test
+```
+
+---
+
+## Quiz Flow
+
+1. User starts the quiz.
+2. Questions are displayed one at a time.
+3. User selects an answer.
+4. Navigation is available using Previous and Next buttons.
+5. Answers are stored by the quiz engine.
+6. Final score is calculated automatically.
+7. Results screen displays:
+   - Overall score
+   - Percentage
+   - Category breakdown
+8. User can restart the quiz.
+
+---
+
+## Categories
+
+- Git
+- React
+- TypeScript
+- Tooling
+- Deployment
+- HTML & CSS
+
+---
+
+## Architecture
+
+The application follows a component-based architecture.
+
+- **Components** handle reusable UI.
+- **Screens** represent application pages.
+- **Hooks** manage quiz logic.
+- **Reducer** manages application state.
+- **Utilities** perform score calculations and helper functions.
+- **Data** contains quiz questions.
+
+---
+
+## Contributors
+
+[Thuto](https://github.com/mrmalope-404) &
+[Modise](https://github.com/Modise-Kgosi) &
+[Itumeleng](https://github.com/ITaolana) &
+[Barati](https://github.com/bida22-036)
+
+Developed collaboratively as part of a team project.
+
+
+Contributions include:
+
+- UI implementation
+- Quiz engine
+- Navigation
+- State management
+- Score calculation
+- Testing
+- Deployment
+
+---
+
+## License
+
+This project was created for educational purposes.
