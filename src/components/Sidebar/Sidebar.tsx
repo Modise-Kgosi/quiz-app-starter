@@ -10,9 +10,18 @@ export interface SidebarItem {
 export interface SidebarProps {
   items: SidebarItem[];
   footerItems?: SidebarItem[];
+  onFooterItemSelect?: (item: SidebarItem) => void;
+  onItemSelect?: (item: SidebarItem) => void;
+  onNewSession?: () => void;
 }
 
-export default function Sidebar({ items, footerItems = [] }: SidebarProps) {
+export default function Sidebar({
+  items,
+  footerItems = [],
+  onFooterItemSelect,
+  onItemSelect,
+  onNewSession,
+}: SidebarProps) {
   return (
     <aside className={styles.sidebar}>
       <div className={styles.brand}>
@@ -26,6 +35,10 @@ export default function Sidebar({ items, footerItems = [] }: SidebarProps) {
             className={`${styles.item} ${item.active ? styles.active : ""}`}
             href="#"
             key={item.label}
+            onClick={(event) => {
+              event.preventDefault();
+              onItemSelect?.(item);
+            }}
           >
             <span aria-hidden="true">{item.icon}</span>
             <span>{item.label}</span>
@@ -33,13 +46,21 @@ export default function Sidebar({ items, footerItems = [] }: SidebarProps) {
         ))}
       </nav>
 
-      <Button className={styles.newSession} size="sm">
+      <Button className={styles.newSession} size="sm" onClick={onNewSession}>
         new_session
       </Button>
 
       <nav className={styles.footer} aria-label="System actions">
         {footerItems.map((item) => (
-          <a className={styles.item} href="#" key={item.label}>
+          <a
+            className={styles.item}
+            href="#"
+            key={item.label}
+            onClick={(event) => {
+              event.preventDefault();
+              onFooterItemSelect?.(item);
+            }}
+          >
             <span aria-hidden="true">{item.icon}</span>
             <span>{item.label}</span>
           </a>

@@ -4,15 +4,17 @@ import { TerminalCard } from "../../components/Layout/Layout";
 import QuestionCard from "../../components/QuestionCard/QuestionCard";
 import styles from "./QuizScreen.module.css";
 
+// Props passed from the parent app to control the quiz UI.
 export interface QuizScreenProps {
   question: Question;
   questionNumber: number;
   totalQuestions: number;
   selectedIndex?: number;
-  isFirstQuestion: boolean;
+  streak: number;
+  uptime: string;
+  hasSelectedAnswer: boolean;
   onSelectAnswer: (selectedIndex: number) => void;
   onNext: () => void;
-  onPrevious: () => void;
 }
 
 export default function QuizScreen({
@@ -20,15 +22,18 @@ export default function QuizScreen({
   questionNumber,
   totalQuestions,
   selectedIndex,
-  isFirstQuestion,
+  streak,
+  uptime,
+  hasSelectedAnswer,
   onSelectAnswer,
   onNext,
-  onPrevious,
 }: QuizScreenProps) {
+  // Computes the visual progress percentage for the current question.
   const progressValue = Math.round((questionNumber / totalQuestions) * 100);
 
   return (
     <div className={styles.screen}>
+      {/* Main terminal-style quiz card showing the current question. */}
       <TerminalCard
         footer={
           <div className={styles.footer}>
@@ -36,11 +41,21 @@ export default function QuizScreen({
               <span>Esc quit</span>
               <span>Ctrl+H help</span>
             </div>
+            <div className={styles.footerMeta}>
+              <span
+                className={`${styles.requirement} ${hasSelectedAnswer ? styles.requirementReady : ""}`}
+              >
+                {hasSelectedAnswer
+                  ? "answer locked — press next to confirm"
+                  : "select an answer to continue"}
+              </span>
+            </div>
             <div className={styles.actions}>
-              <Button disabled={isFirstQuestion} onClick={onPrevious}>
-                prev
-              </Button>
-              <Button variant="primary" onClick={onNext}>
+              <Button
+                disabled={!hasSelectedAnswer}
+                variant="primary"
+                onClick={onNext}
+              >
                 next
               </Button>
             </div>
@@ -60,12 +75,13 @@ export default function QuizScreen({
         />
       </TerminalCard>
 
+      {/* Small stat widgets displayed beneath the main quiz card. */}
       <div className={styles.widgets}>
-        <StatPanel label="session uptime" value="00h 14m 22s" tone="green" />
-        <StatPanel label="global rank" value="#1,402 / 12k" />
-        <StatPanel label="streak" value="05 answers" />
+        <StatPanel label="session uptime" value={uptime} tone="green" />
+        <StatPanel label="streak" value={`${streak} answers`} />
       </div>
 
+      {/* Additional terminal-style resource panels for the quiz screen. */}
       <div className={styles.resources}>
         <TerminalCard path="fastfetch" title="fastfetch">
           <dl>
@@ -92,12 +108,14 @@ export default function QuizScreen({
   );
 }
 
+// Props for the small status/stat panels shown on the screen.
 interface StatPanelProps {
   label: string;
   value: string;
   tone?: "blue" | "green";
 }
 
+// Renders a compact stat panel with a label and value.
 function StatPanel({ label, value, tone = "blue" }: StatPanelProps) {
   return (
     <article className={styles.statPanel}>

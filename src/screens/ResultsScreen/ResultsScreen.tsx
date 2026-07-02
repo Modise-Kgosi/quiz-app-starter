@@ -14,14 +14,18 @@ export interface ResultsScreenProps {
   score: number;
   total: number;
   results: CategoryResult[];
+  uptime: string;
   onRestart: () => void;
+  onUnavailableAction: () => void;
 }
 
 export default function ResultsScreen({
   score,
   total,
   results,
+  uptime,
   onRestart,
+  onUnavailableAction,
 }: ResultsScreenProps) {
   return (
     <TerminalCard
@@ -58,12 +62,14 @@ export default function ResultsScreen({
       <div className={styles.rule} />
       <div className={styles.actions}>
         <Button size="lg" variant="primary" onClick={onRestart}>
-          restart quiz
+          new session
         </Button>
-        <Button size="lg">export logs</Button>
+        <Button size="lg" onClick={onUnavailableAction}>
+          export logs
+        </Button>
       </div>
       <pre className={styles.terminal}>{`> session_id:   8f42-4211-ac9d
-> date:         2026-07-01 14:32:01
+> uptime:       ${uptime}
 > user_agent:   arch-linux-x86_64
 
 > system_report_finalized. logs written to /var/log/quiz/session_03.log`}</pre>

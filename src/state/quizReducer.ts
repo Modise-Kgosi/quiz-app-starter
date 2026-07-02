@@ -5,6 +5,7 @@ export interface QuizState {
   currentIndex: number;
   answers: AnsweredRecord[];
   isComplete: boolean;
+  pendingSelection: number | null;
 }
 
 export function createInitialState(questions: NewQuestion[]): QuizState {
@@ -13,6 +14,7 @@ export function createInitialState(questions: NewQuestion[]): QuizState {
     currentIndex: 0,
     answers: [],
     isComplete: false,
+    pendingSelection: null,
   };
 }
 
@@ -28,29 +30,43 @@ export function quizReducer(state: QuizState, action: QuizAction): QuizState {
       const question = state.questions[state.currentIndex];
       if (!question) return state;
 
-      const isCorrect = action.payload.selectedIndex === question.correctAnswer;
+      return { ...state, pendingSelection: action.payload.selectedIndex };
+    }
 
+    case "GO_NEXT": {
+      const question = state.questions[state.currentIndex];
+      if (!question || state.pendingSelection === null) {
+        return state;
+      }
+
+      const isCorrect = state.pendingSelection === question.correctAnswer;
       const newRecord: AnsweredRecord = {
         questionId: question.id,
-        selectedIndex: action.payload.selectedIndex,
+        selectedIndex: state.pendingSelection,
         isCorrect,
       };
 
       const updatedAnswers = [
-        ...state.answers.filter((a) => a.questionId !== question.id),
+        ...state.answers.filter((answer) => answer.questionId !== question.id),
         newRecord,
       ];
 
-      const isComplete = updatedAnswers.length === state.questions.length;
-
-      return { ...state, answers: updatedAnswers, isComplete };
-    }
-
-    case "GO_NEXT": {
       if (state.currentIndex < state.questions.length - 1) {
-        return { ...state, currentIndex: state.currentIndex + 1 };
+        return {
+          ...state,
+          answers: updatedAnswers,
+          currentIndex: state.currentIndex + 1,
+          pendingSelection: null,
+          isComplete: false,
+        };
       }
-      return { ...state, isComplete: true };
+
+      return {
+        ...state,
+        answers: updatedAnswers,
+        pendingSelection: null,
+        isComplete: true,
+      };
     }
 
     case "GO_PREVIOUS": {

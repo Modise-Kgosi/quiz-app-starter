@@ -8,7 +8,8 @@
   gap: 10px;
   justify-content: center;
   letter-spacing: 0.08em;
-  min-height: 38px;
+  min-height: 44px;
+  padding: 10px 16px;
   text-transform: uppercase;
   transition:
     background-color 140ms ease,

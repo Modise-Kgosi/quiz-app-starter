@@ -4,6 +4,8 @@
   display: grid;
   grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
   min-height: 100vh;
+  min-width: 0;
+  overflow-x: hidden;
 }
 
 .topbar {
@@ -11,11 +13,12 @@
   background: rgba(10, 15, 20, 0.92);
   border-bottom: 1px solid var(--color-border);
   display: flex;
+  flex-wrap: wrap;
   font-family: var(--font-mono);
-  gap: 16px;
+  gap: 6px 12px;
   justify-content: space-between;
-  min-height: var(--topbar-height);
-  padding: 0 14px;
+  min-height: 38px;
+  padding: 6px 14px;
 }
 
 .topbarPrompt {
@@ -49,8 +52,8 @@
 .promptText {
   background: rgba(131, 201, 244, 0.14);
   color: #8bd0ff;
-  font-size: 0.72rem;
-  padding: 2px 8px;
+  font-size: 0.7rem;
+  padding: 1px 8px;
 }
 
 .status {
@@ -58,8 +61,8 @@
   color: var(--color-muted);
   display: flex;
   flex-wrap: wrap;
-  font-size: 0.72rem;
-  gap: 12px;
+  font-size: 0.68rem;
+  gap: 6px 10px;
   justify-content: flex-end;
 }
 
@@ -74,9 +77,9 @@
   border-radius: var(--radius);
   display: inline-flex;
   font-family: var(--font-mono);
-  font-size: 0.78rem;
-  gap: 8px;
-  padding: 5px 8px;
+  font-size: 0.7rem;
+  gap: 6px;
+  padding: 3px 7px;
 }
 
 .categoryActive {
@@ -156,10 +159,13 @@
   display: grid;
   grid-template-rows: auto 1fr auto;
   min-width: 0;
+  overflow-x: hidden;
 }
 
 .content {
-  padding: 14px;
+  min-width: 0;
+  overflow-x: hidden;
+  padding: 10px 12px 12px;
 }
 
 .commandLine {
@@ -167,10 +173,11 @@
   border-top: 1px solid var(--color-border);
   color: var(--color-text);
   display: flex;
+  flex-wrap: wrap;
   font-family: var(--font-mono);
-  gap: 12px;
-  min-height: 48px;
-  padding: 0 28px;
+  gap: 6px 10px;
+  min-height: 36px;
+  padding: 6px 20px;
 }
 
 .commandLine i {
@@ -183,7 +190,7 @@
 
 .commandLine small {
   color: var(--color-muted);
-  font-size: 0.65rem;
+  font-size: 0.62rem;
 }
 
 .commandLine small::before {
@@ -193,13 +200,13 @@
 
 .commandLine nav {
   display: flex;
-  gap: 28px;
+  gap: 16px;
   margin-left: auto;
 }
 
 .commandLine a {
   color: var(--color-muted);
-  font-size: 0.68rem;
+  font-size: 0.64rem;
   text-decoration: none;
 }
 
@@ -232,7 +239,11 @@
   .topbar {
     align-items: flex-start;
     flex-direction: column;
-    padding: 9px 14px;
+    padding: 7px 12px;
+  }
+
+  .status {
+    width: 100%;
   }
 }
 
@@ -242,6 +253,10 @@
   }
 
   .terminalBody {
-    padding: 16px;
+    padding: 14px;
+  }
+
+  .commandLine {
+    padding: 6px 12px;
   }
 }

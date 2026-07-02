@@ -4,6 +4,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100%;
+  overflow-x: hidden;
   padding: 22px 14px;
   width: var(--sidebar-width);
 }
@@ -75,20 +76,21 @@
     border-bottom: 1px solid var(--color-border);
     border-right: 0;
     min-height: auto;
-    padding: 14px;
+    padding: 12px 14px 14px;
     width: 100%;
   }
 
   .brand {
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
 
-  .nav {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .newSession,
+  .nav,
   .footer {
     display: none;
+  }
+
+  .newSession {
+    display: block;
+    margin: 4px 0 0;
   }
 }

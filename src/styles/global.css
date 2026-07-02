@@ -6,12 +6,14 @@
 
 html {
   background: var(--color-background);
+  overflow-x: hidden;
 }
 
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  overflow-x: hidden;
   background:
     linear-gradient(rgba(56, 189, 248, 0.025) 1px, transparent 1px),
     linear-gradient(90deg, rgba(56, 189, 248, 0.025) 1px, transparent 1px),

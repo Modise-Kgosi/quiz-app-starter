@@ -1,5 +1,8 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Layout from "./components/Layout/Layout";
+import type { SidebarItem } from "./components/Sidebar/Sidebar";
+import TerminalModal from "./components/TerminalModal/TerminalModal";
+import { errorEntries } from "./data/errorEncyclopedia";
 import questions from "./data/questions";
 import { useQuizEngine } from "./hooks/useQuizEngine";
 import QuizScreen from "./screens/QuizScreen/QuizScreen";
@@ -10,27 +13,49 @@ import WelcomeScreen from "./screens/WelcomeScreen/WelcomeScreen";
 import "./App.css";
 
 type AppScreen = "welcome" | "quiz";
+type ActiveModal = "errors" | "not-implemented" | null;
 
+// Footer actions shown in the app layout.
 const footerItems = [
-  { label: "~/settings", icon: "⚙" },
-  { label: "shutdown", icon: "⏻" },
+  { label: "~/errors", icon: "!" },
+  { label: "Do not press", icon: "⏻" },
 ];
 
+function formatElapsedTime(milliseconds: number) {
+  const totalSeconds = Math.max(0, Math.floor(milliseconds / 1000));
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  return [hours, minutes, seconds]
+    .map((part) => String(part).padStart(2, "0"))
+    .join(":");
+}
+
 function App() {
+  // Tracks whether the app is showing the welcome screen or the quiz screen.
   const [screen, setScreen] = useState<AppScreen>("welcome");
+  const [activeModal, setActiveModal] = useState<ActiveModal>(null);
+  const [sessionStartedAt, setSessionStartedAt] = useState<number | null>(null);
+  const [elapsedTime, setElapsedTime] = useState(0);
+  // Manages quiz state such as current question, answers, score, and navigation.
   const quiz = useQuizEngine(questions);
 
+  // Collects all unique question categories for the sidebar and screens.
   const categories = useMemo(
     () => Array.from(new Set(questions.map((question) => question.category))),
     [],
   );
 
-  const selectedAnswer = quiz.currentQuestion
-    ? quiz.answers.find(
+  // Uses the pending selection first, then falls back to a confirmed answer.
+  const selectedIndex = quiz.currentQuestion
+    ? (quiz.pendingSelection ??
+      quiz.answers.find(
         (answer) => answer.questionId === quiz.currentQuestion?.id,
-      )
+      )?.selectedIndex)
     : undefined;
 
+  // Builds the results data for each category shown on the results screen.
   const resultRows = useMemo<CategoryResult[]>(() => {
     return categories.map((category) => {
       const categoryQuestions = questions.filter(
@@ -50,32 +75,90 @@ function App() {
     });
   }, [categories, quiz.answers]);
 
+  // Determines whether the app should show the results view.
   const isResultsScreen = screen === "quiz" && quiz.isComplete;
+  // Highlights the current category in the sidebar while the quiz is active.
   const activeCategory = isResultsScreen
     ? undefined
     : screen === "quiz"
       ? quiz.currentQuestion?.category
       : undefined;
+  const formattedUptime = formatElapsedTime(elapsedTime);
 
+  // Creates the sidebar entries for categories and the results page.
   const sidebarItems = [
-    ...categories.map((category) => ({
-      label: `~/quiz/${category}`,
-      icon: category === activeCategory ? "▣" : "□",
-      active: category === activeCategory,
-    })),
+    ...categories
+      .filter((category) => category === activeCategory)
+      .map((category) => ({
+        label: `~/quiz/${category}`,
+        icon: "□",
+        active: false,
+      })),
     { label: "~/results", icon: "⚙", active: isResultsScreen },
   ];
 
+  // Starts the quiz from the welcome screen.
   function handleStart() {
     quiz.reset();
+    setElapsedTime(0);
+    setSessionStartedAt(Date.now());
     setScreen("quiz");
   }
 
-  function handleRestart() {
+  // Starts a fresh quiz session from the beginning.
+  function handleNewSession() {
+    setActiveModal(null);
     quiz.reset();
-    setScreen("welcome");
+    setElapsedTime(0);
+    setSessionStartedAt(Date.now());
+    setScreen("quiz");
   }
 
+  function openUnavailableModal() {
+    setActiveModal("not-implemented");
+  }
+
+  function handleFooterItemSelect(item: SidebarItem) {
+    if (item.label === "~/errors") {
+      setActiveModal("errors");
+      return;
+    }
+
+    openUnavailableModal();
+  }
+
+  function renderModal() {
+    if (activeModal === "errors") {
+      return <ErrorEncyclopediaModal onClose={() => setActiveModal(null)} />;
+    }
+
+    if (activeModal === "not-implemented") {
+      return <FeatureUnavailableModal onClose={() => setActiveModal(null)} />;
+    }
+
+    return null;
+  }
+
+  useEffect(() => {
+    if (screen !== "quiz" || sessionStartedAt === null) {
+      return undefined;
+    }
+
+    const updateElapsedTime = () => {
+      setElapsedTime(Date.now() - sessionStartedAt);
+    };
+
+    updateElapsedTime();
+
+    if (quiz.isComplete) {
+      return undefined;
+    }
+
+    const intervalId = window.setInterval(updateElapsedTime, 1000);
+    return () => window.clearInterval(intervalId);
+  }, [quiz.isComplete, screen, sessionStartedAt]);
+
+  // Renders the welcome screen when the app first loads.
   if (screen === "welcome") {
     return (
       <div className="app">
@@ -86,13 +169,19 @@ function App() {
           progress="[ 00/00 ]"
           sidebarItems={sidebarItems}
           statusItems={["system: ready", "session: initialized"]}
+          onCommandAction={openUnavailableModal}
+          onFooterItemSelect={handleFooterItemSelect}
+          onNewSession={handleNewSession}
+          onSidebarItemSelect={openUnavailableModal}
         >
           <WelcomeScreen categories={categories} onStart={handleStart} />
         </Layout>
+        {renderModal()}
       </div>
     );
   }
 
+  // Renders the results screen after the quiz is completed.
   if (isResultsScreen) {
     return (
       <div className="app">
@@ -105,22 +194,31 @@ function App() {
           prompt="user@archlinux:~"
           sidebarItems={sidebarItems}
           statusItems={categories}
+          onCommandAction={openUnavailableModal}
+          onFooterItemSelect={handleFooterItemSelect}
+          onNewSession={handleNewSession}
+          onSidebarItemSelect={openUnavailableModal}
         >
           <ResultsScreen
             results={resultRows}
             score={quiz.score.correct}
             total={quiz.score.total}
-            onRestart={handleRestart}
+            uptime={formattedUptime}
+            onUnavailableAction={openUnavailableModal}
+            onRestart={handleNewSession}
           />
         </Layout>
+        {renderModal()}
       </div>
     );
   }
 
+  // Avoids rendering anything before the quiz has a current question.
   if (!quiz.currentQuestion) {
     return null;
   }
 
+  // Calculates the current question number and progress percentage.
   const questionNumber = quiz.currentIndex + 1;
   const progressPercent = Math.round(
     (questionNumber / quiz.totalQuestions) * 100,
@@ -141,22 +239,91 @@ function App() {
           `question: ${String(questionNumber).padStart(2, "0")} / ${String(
             quiz.totalQuestions,
           ).padStart(2, "0")}`,
+          `streak: ${quiz.streak}`,
+          `uptime: ${formattedUptime}`,
           `${progressPercent}%`,
         ]}
+        onCommandAction={openUnavailableModal}
+        onFooterItemSelect={handleFooterItemSelect}
+        onNewSession={handleNewSession}
+        onSidebarItemSelect={openUnavailableModal}
       >
         <QuizScreen
-          isFirstQuestion={quiz.isFirstQuestion}
+          hasSelectedAnswer={quiz.pendingSelection !== null}
           onNext={quiz.goNext}
-          onPrevious={quiz.goPrevious}
           onSelectAnswer={quiz.selectAnswer}
           question={quiz.currentQuestion}
           questionNumber={questionNumber}
-          selectedIndex={selectedAnswer?.selectedIndex}
+          selectedIndex={selectedIndex}
+          streak={quiz.streak}
           totalQuestions={quiz.totalQuestions}
+          uptime={formattedUptime}
         />
       </Layout>
+      {renderModal()}
     </div>
   );
 }
 
 export default App;
+
+interface ModalOnlyProps {
+  onClose: () => void;
+}
+
+function FeatureUnavailableModal({ onClose }: ModalOnlyProps) {
+  return (
+    <TerminalModal
+      meta="404"
+      path="~/errors/not-found.log"
+      title="ERROR 404"
+      onClose={onClose}
+    >
+      <div className="error-popup">
+        <strong>Feature Not Implemented</strong>
+        <p>This feature is currently unavailable.</p>
+        <p>The requested resource or functionality could not be found.</p>
+        <small>See ~/errors for more information.</small>
+      </div>
+    </TerminalModal>
+  );
+}
+
+function ErrorEncyclopediaModal({ onClose }: ModalOnlyProps) {
+  const groups = ["HTTP/Web Errors", "Development Errors"] as const;
+
+  return (
+    <TerminalModal
+      meta={`${String(errorEntries.length).padStart(2, "0")} entries`}
+      path="~/errors"
+      title="Error Encyclopedia"
+      onClose={onClose}
+    >
+      <div className="error-manual">
+        <p className="manual-intro">
+          Built-in reference manual for common web and development failures.
+        </p>
+        {groups.map((group) => (
+          <section className="manual-section" key={group}>
+            <h3>{group}</h3>
+            <div className="manual-grid">
+              {errorEntries
+                .filter((entry) => entry.group === group)
+                .map((entry) => (
+                  <article className="manual-entry" key={entry.name}>
+                    <header>
+                      <code>{entry.code}</code>
+                      <strong>{entry.name}</strong>
+                    </header>
+                    <p>{entry.description}</p>
+                    <span>{entry.explanation}</span>
+                    {entry.example ? <small>{entry.example}</small> : null}
+                  </article>
+                ))}
+            </div>
+          </section>
+        ))}
+      </div>
+    </TerminalModal>
+  );
+}

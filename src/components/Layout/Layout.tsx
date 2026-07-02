@@ -11,6 +11,10 @@ export interface LayoutProps {
   activeCategory?: string;
   progress?: string;
   bottomPrompt?: string;
+  onCommandAction?: (command: string) => void;
+  onFooterItemSelect?: (item: SidebarItem) => void;
+  onNewSession?: () => void;
+  onSidebarItemSelect?: (item: SidebarItem) => void;
 }
 
 export default function Layout({
@@ -22,10 +26,20 @@ export default function Layout({
   activeCategory,
   progress,
   bottomPrompt = "user@archlinux:~$",
+  onCommandAction,
+  onFooterItemSelect,
+  onNewSession,
+  onSidebarItemSelect,
 }: LayoutProps) {
   return (
     <div className={styles.layout}>
-      <Sidebar items={sidebarItems} footerItems={footerItems} />
+      <Sidebar
+        items={sidebarItems}
+        footerItems={footerItems}
+        onFooterItemSelect={onFooterItemSelect}
+        onItemSelect={onSidebarItemSelect}
+        onNewSession={onNewSession}
+      />
       <div className={styles.main}>
         <TopBar
           prompt={prompt}
@@ -39,9 +53,18 @@ export default function Layout({
           <i aria-hidden="true" />
           <small>system online</small>
           <nav>
-            <a href="#">--help</a>
-            <a href="#">--version</a>
-            <a href="#">--exit</a>
+            {["--help", "--version", "--exit"].map((command) => (
+              <a
+                href="#"
+                key={command}
+                onClick={(event) => {
+                  event.preventDefault();
+                  onCommandAction?.(command);
+                }}
+              >
+                {command}
+              </a>
+            ))}
           </nav>
         </footer>
       </div>
